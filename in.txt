@@ -1,6 +1,0 @@
-1800 Ubezpieczenie
-1200 Energia elektryczna
-800 Usługi kominiarskie
-2200 Przeglądy techniczne
-3800 Konserwacje, awarie, naprawy
-4500 Media
