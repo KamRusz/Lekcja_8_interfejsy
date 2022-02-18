@@ -83,7 +83,7 @@ class WeatherForecast:
             print((line[0], line[1]))
 
 
-wf = WeatherForecast("6daa76d5a9mshe1e6b28d3640045p107ec2jsn801692e10c89")
+wf = WeatherForecast("")
 wf.data_load()
 #print("\niterator wf:")
 #print(wf)
