@@ -1,24 +1,59 @@
 import datetime
 from os import path
 import requests
+import json
+import sys
 
-history = {}
+try:
+    api_key = sys.argv[1]
+except IndexError:
+    exit("nie podano klucza api")
+else:
+    api_key = sys.argv[1]
+
+try:
+    req_date = sys.argv[2]
+except IndexError:
+    req_date = str(datetime.date.today() + datetime.timedelta(days=1))
+else:
+    req_date = sys.argv[2]
+taken_date = datetime.datetime.strptime(req_date, "%Y-%m-%d")
+
+if taken_date < (datetime.datetime.today() - datetime.timedelta(1)) or taken_date > (
+    datetime.datetime.today() + datetime.timedelta(15)
+):
+    exit(
+        f"\n{req_date} : Nie wiem"
+        "\n\nProgram obsługuje wyłącznie daty od"
+        f" {datetime.date.today()}"
+        f" do {datetime.date.today() + datetime.timedelta(15)}\n"
+    )
 
 
 class WeatherForecast:
     def __init__(self, api):
         self.api = api
-        self.opad = ("Rain", "Snow", "Będzie padać", "Nie będzie padać")
+        self.opad = ("Rain", "Snow")
+        self.history = {}
+        self.data_load()
 
     def data_load(self):
         if path.isfile("pogoda2.txt"):
-            for line in self.generator():
-                history[line[0]]=line[1]
-            return history
+            with open("pogoda2.txt", "r") as pogoda_log:
+                self.history = json.load(pogoda_log)
+                if self.history["valid till"] != str(datetime.date.today()):
+                    self.read_api()
+                return self.history
         else:
-            self.czytaj_16dni(self)
+            self.read_api()
 
-    def czytaj_16dni(self):
+    def data_save(self):
+        with open("pogoda2.txt", "w") as pogoda_log:
+            json.dump(
+                self.history, pogoda_log, sort_keys=True, indent=4, ensure_ascii=False
+            )
+
+    def read_api(self):
         url = "https://community-open-weather-map.p.rapidapi.com/forecast/daily"
 
         querystring = {
@@ -36,63 +71,51 @@ class WeatherForecast:
             "x-rapidapi-key": self.api,
         }
 
-        response = requests.request(
-            "GET", url, headers=headers, params=querystring
-            )
+        response = requests.request("GET", url, headers=headers, params=querystring)
         dane = response.json()
+        valid_date = dane["list"][0]["dt"]
+        valid_date = datetime.datetime.utcfromtimestamp(int(valid_date)).strftime(
+            "%Y-%m-%d"
+        )
+        self.history["valid till"] = valid_date
 
         for day in dane["list"]:
             date = datetime.datetime.utcfromtimestamp(int(day["dt"])).strftime(
-            "%Y-%m-%d"
-        )
-            history[date] = (
-                "Będzie padać" if day["weather"][0]["main"] in self.opad else
-                 "Nie będzie padać"
-                 )
-        return history
+                "%Y-%m-%d"
+            )
 
-    def generator(self):
-        with open("pogoda2.txt", "r") as pogoda_log:
-            for line in pogoda_log:
-                yield (line.split(' ')[0], ' '.join(line.strip().split(' ')[1:]))         
-
+            self.history[date] = (
+                "Będzie padać"
+                if day["weather"][0]["main"] in self.opad
+                else "Nie będzie padać"
+            )
+        return self.history
 
     def __iter__(self):
-        self.dates_list = []
-        self.fp = open("pogoda2.txt")
-        return self
-
-    def __next__(self):
-        dates = self.fp.readline().strip().split()
-        if not dates:
-            self.fp.close()
-            raise StopIteration
-        self.dates_list.append(dates)
-        return dates
+        return iter(self.history.keys())
 
     def __getitem__(self, item):
-        return f"{item} {history[item]}"
+        return f"{item} {self.history[item]}"
 
     def __str__(self):
         for dates in self:
-            print(dates[0]) 
+            print(dates[0])
         return "stop iterator"
 
     def items(self):
-        for line in self.generator():
-            print((line[0], line[1]))
+        return self.history.items()
 
 
-wf = WeatherForecast("6daa76d5a9mshe1e6b28d3640045p107ec2jsn801692e10c89")
-wf.data_load()
-#print("\niterator wf:")
-#print(wf)
-#print("\nwf[data]:")
-print(history)
-date = "2022-02-15"
+wf = WeatherForecast(api_key)
+wf.data_save
+date = "2022-02-20"
 print(wf[date])
-#print("\nwf.items():")
-#wf.items()
-#print("\n")
 
-#print(wf.czytaj_16dni())
+"""
+for date, prescript in wf.items():
+    print(date, prescript)
+"""
+"""
+for date in wf:
+    print(date)
+"""
