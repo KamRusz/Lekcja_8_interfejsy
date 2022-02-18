@@ -1,0 +1,19 @@
+{
+    "2022-02-18": "Bêdzie padaæ",
+    "2022-02-19": "Bêdzie padaæ",
+    "2022-02-20": "Bêdzie padaæ",
+    "2022-02-21": "Bêdzie padaæ",
+    "2022-02-22": "Bêdzie padaæ",
+    "2022-02-23": "Bêdzie padaæ",
+    "2022-02-24": "Nie bêdzie padaæ",
+    "2022-02-25": "Bêdzie padaæ",
+    "2022-02-26": "Bêdzie padaæ",
+    "2022-02-27": "Nie bêdzie padaæ",
+    "2022-02-28": "Nie bêdzie padaæ",
+    "2022-03-01": "Nie bêdzie padaæ",
+    "2022-03-02": "Nie bêdzie padaæ",
+    "2022-03-03": "Nie bêdzie padaæ",
+    "2022-03-04": "Nie bêdzie padaæ",
+    "2022-03-05": "Nie bêdzie padaæ",
+    "valid till": "2022-02-18"
+}
