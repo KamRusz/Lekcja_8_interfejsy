@@ -33,7 +33,7 @@ if taken_date < (datetime.datetime.today() - datetime.timedelta(1)) or taken_dat
 class WeatherForecast:
     def __init__(self, api):
         self.api = api
-        self.opad = ("Rain", "Snow")
+        self.weather_options = ("Rain", "Snow")
         self.history = {}
         self.data_load()
 
@@ -86,7 +86,7 @@ class WeatherForecast:
 
             self.history[date] = (
                 "Będzie padać"
-                if day["weather"][0]["main"] in self.opad
+                if day["weather"][0]["main"] in self.weather_options
                 else "Nie będzie padać"
             )
         return self.history
@@ -105,9 +105,8 @@ class WeatherForecast:
     def items(self):
         return self.history.items()
 
-
 wf = WeatherForecast(api_key)
-wf.data_save
+wf.data_save()
 date = "2022-02-20"
 print(wf[date])
 
