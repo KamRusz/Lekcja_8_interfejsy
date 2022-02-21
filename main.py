@@ -97,11 +97,6 @@ class WeatherForecast:
     def __getitem__(self, item):
         return f"{item} {self.history[item]}"
 
-    def __str__(self):
-        for dates in self:
-            print(dates[0])
-        return "stop iterator"
-
     def items(self):
         return self.history.items()
 
